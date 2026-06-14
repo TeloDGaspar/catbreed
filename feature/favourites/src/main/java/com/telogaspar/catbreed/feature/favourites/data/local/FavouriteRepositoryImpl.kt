@@ -1,4 +1,4 @@
-package com.telogaspar.catbreed.feature.favourites.data
+package com.telogaspar.catbreed.feature.favourites.data.local
 
 import com.telogaspar.catbreed.core.database.dao.FavouriteDao
 import com.telogaspar.catbreed.core.database.entity.CatBreedEntity

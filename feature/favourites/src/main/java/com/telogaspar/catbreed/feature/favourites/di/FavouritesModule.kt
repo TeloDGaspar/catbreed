@@ -1,6 +1,6 @@
 package com.telogaspar.catbreed.feature.favourites.di
 
-import com.telogaspar.catbreed.feature.favourites.data.FavouriteRepositoryImpl
+import com.telogaspar.catbreed.feature.favourites.data.local.FavouriteRepositoryImpl
 import com.telogaspar.catbreed.feature.favourites.domain.FavouriteRepository
 import dagger.Binds
 import dagger.Module

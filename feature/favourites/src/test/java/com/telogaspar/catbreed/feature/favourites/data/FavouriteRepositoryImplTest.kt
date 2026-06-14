@@ -3,11 +3,14 @@ package com.telogaspar.catbreed.feature.favourites.data
 import com.telogaspar.catbreed.core.database.dao.FavouriteDao
 import com.telogaspar.catbreed.core.database.entity.CatBreedEntity
 import com.telogaspar.catbreed.core.database.entity.FavouriteEntity
+import com.telogaspar.catbreed.feature.favourites.data.local.FavouriteRepositoryImpl
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -57,5 +60,35 @@ class FavouriteRepositoryImplTest {
         val result = repository.getFavouriteBreeds().first()
 
         assertEquals(listOf(entity), result)
+    }
+
+    @Test
+    fun `GIVEN dao emits empty list WHEN getFavouriteIds is called THEN returns empty set`() = runTest {
+        every { dao.getFavouriteIds() } returns flowOf(emptyList())
+
+        val result = repository.getFavouriteIds().first()
+
+        assertEquals(emptySet(), result)
+    }
+
+    @Test
+    fun `GIVEN dao emits empty list WHEN getFavouriteBreeds is called THEN returns empty list`() = runTest {
+        every { dao.getFavouriteBreeds() } returns flowOf(emptyList())
+
+        val result = repository.getFavouriteBreeds().first()
+
+        assertEquals(emptyList(), result)
+    }
+
+    @Test
+    fun `GIVEN dao emits multiple values WHEN getFavouriteIds collected THEN each emission is mapped to set`() = runTest {
+        every { dao.getFavouriteIds() } returns flow {
+            emit(listOf("abys"))
+            emit(listOf("abys", "aege"))
+        }
+
+        val results = repository.getFavouriteIds().toList()
+
+        assertEquals(listOf(setOf("abys"), setOf("abys", "aege")), results)
     }
 }
