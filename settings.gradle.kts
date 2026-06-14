@@ -23,6 +23,7 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Cat Breeds"
+include(":app")
 include(":feature")
 include(":core")
 include(":feature:breedList")
