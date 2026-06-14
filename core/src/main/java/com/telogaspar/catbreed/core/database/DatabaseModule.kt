@@ -3,6 +3,7 @@ package com.telogaspar.catbreed.core.database
 import android.content.Context
 import androidx.room.Room
 import com.telogaspar.catbreed.core.database.dao.CatBreedDao
+import com.telogaspar.catbreed.core.database.dao.FavouriteDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,4 +28,9 @@ object DatabaseModule {
     @Singleton
     fun provideCatBreedDao(database: CatBreedsDatabase): CatBreedDao =
         database.catBreedDao()
+
+    @Provides
+    @Singleton
+    fun provideFavouriteDao(database: CatBreedsDatabase): FavouriteDao =
+        database.favouriteDao()
 }
