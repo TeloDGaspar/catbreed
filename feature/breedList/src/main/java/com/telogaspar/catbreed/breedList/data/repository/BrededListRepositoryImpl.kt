@@ -14,24 +14,30 @@ import javax.inject.Inject
 internal class BreedListRepositoryImpl @Inject constructor(
     private val remoteDataSource: BreedEventListRemoteDataSource,
     private val mapper: EventMapper,
-    private val catBreedDao: CatBreedDao
+    private val catBreedDao: CatBreedDao,
 ) : BreedListRepository {
 
-    override fun fetchBreedList(): Flow<List<Breed>> = flow {
+    override fun fetchBreedList(page: Int, limit: Int): Flow<List<Breed>> = flow {
         try {
-            val response = remoteDataSource.fetchBreedList()
+            val response = remoteDataSource.fetchBreedList(page = page, limit = limit)
             if (response.isEmpty()) throw BreedException.EmptyResultException()
             val breeds = mapper.map(response)
             catBreedDao.upsertBreeds(breeds.map { it.toEntity() })
             emit(breeds)
         } catch (e: Exception) {
-            val cached = catBreedDao.getBreedsPage(limit = 50, offset = 0)
+            val cached = catBreedDao.getBreedsPage(limit = limit, offset = page * limit)
             if (cached.isNotEmpty()) {
                 emit(cached.map { it.toDomain() })
             } else {
                 throw e as? BreedException ?: BreedException.NetworkException(e)
             }
         }
+    }
+
+    override fun fetchBreedById(id: String): Flow<Breed> = flow {
+        val entity = catBreedDao.getBreedById(id)
+            ?: throw BreedException.NetworkException(NoSuchElementException("Breed $id not found"))
+        emit(entity.toDomain())
     }
 
     private fun CatBreedEntity.toDomain() = Breed(
@@ -42,6 +48,7 @@ internal class BreedListRepositoryImpl @Inject constructor(
         description = description,
         lifeSpan = lifeSpan,
         imageUrl = imageUrl,
+        weightMetric = weightMetric,
     )
 
     private fun Breed.toEntity() = CatBreedEntity(
@@ -52,5 +59,6 @@ internal class BreedListRepositoryImpl @Inject constructor(
         description = description.orEmpty(),
         lifeSpan = lifeSpan.orEmpty(),
         imageUrl = imageUrl,
+        weightMetric = weightMetric.orEmpty(),
     )
 }

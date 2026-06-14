@@ -9,7 +9,12 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalContext
+import com.telogaspar.catbreed.core.theme.AppColors
+import com.telogaspar.catbreed.core.theme.AppFonts
+import com.telogaspar.catbreed.core.theme.LocalAppColors
+import com.telogaspar.catbreed.core.theme.LocalAppFonts
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -50,9 +55,28 @@ fun CatBreedsTheme(
         else -> LightColorScheme
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+    CompositionLocalProvider(
+        LocalAppColors provides AppColors(
+            paper     = HeritagePaper,
+            card      = HeritageCard,
+            sunken    = HeritageSunken,
+            ink       = HeritageInk,
+            ink2      = HeritageInk2,
+            ink3      = HeritageInk3,
+            goldDeep  = HeritageGoldDeep,
+            onGold    = HeritageOnGold,
+            danger    = HeritageDanger,
+            ghost     = HeritageGhost,
+            shadow    = HeritageShadow,
+            goldStart = HeritageGold,
+            goldEnd   = HeritageGoldEnd,
+        ),
+        LocalAppFonts provides AppFonts(),
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content,
+        )
+    }
 }

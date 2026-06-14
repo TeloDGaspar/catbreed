@@ -4,5 +4,5 @@ import com.telogaspar.catbreed.breedList.data.model.BreedsResponse
 
 internal interface BreedEventListRemoteDataSource {
 
-    suspend fun fetchBreedList(): List<BreedsResponse>
+    suspend fun fetchBreedList(page: Int, limit: Int): List<BreedsResponse>
 }

@@ -16,7 +16,8 @@ internal class EventMapper @Inject constructor() : Mapper<List<BreedsResponse>, 
                 temperament = item.temperament,
                 lifeSpan = item.life_span,
                 origin = item.origin,
-                imageUrl = item.image?.url ?: ""
+                imageUrl = item.image?.url ?: "",
+                weightMetric = item.weight.metric,
             )
         }
     }

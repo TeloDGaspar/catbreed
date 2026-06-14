@@ -5,8 +5,9 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 internal interface BreedsEventApi {
-    @GET("v1/breeds")
+    @GET("breeds")
     suspend fun getBreeds(
-        @Query("limit") limit: Int = 50
+        @Query("page") page: Int = 0,
+        @Query("limit") limit: Int = 15,
     ): List<BreedsResponse>
 }

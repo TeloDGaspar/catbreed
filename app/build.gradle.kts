@@ -50,9 +50,15 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.lifecycle.runtime.compose)
 
+    implementation(project(":core"))
+    implementation(project(":feature:breedList"))
+
     // Hilt
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
+    implementation(libs.navigation.compose)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
     ksp(libs.hilt.android.compiler)
 
     testImplementation(libs.junit)

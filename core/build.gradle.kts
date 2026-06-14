@@ -37,6 +37,10 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
 
+    // Compose — api() so consumers inherit Color, Brush, CompositionLocal
+    api(platform(libs.androidx.compose.bom))
+    api(libs.androidx.compose.ui)
+
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

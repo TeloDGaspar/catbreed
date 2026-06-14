@@ -31,10 +31,10 @@ class BreedListRepositoryImplTest {
     fun `GIVEN data source returns results WHEN fetchBreedList is called THEN emits mapped breeds`() = runTest {
         val response = listOf(breedsResponse("1"))
         val breeds = listOf(breed("1"))
-        coEvery { remoteDataSource.fetchBreedList() } returns response
+        coEvery { remoteDataSource.fetchBreedList(page = 0, limit = 15) } returns response
         every { mapper.map(response) } returns breeds
 
-        val emissions = repository.fetchBreedList().toList()
+        val emissions = repository.fetchBreedList(page = 0, limit = 15).toList()
 
         assertEquals(listOf(breeds), emissions)
     }
@@ -43,20 +43,20 @@ class BreedListRepositoryImplTest {
     fun `GIVEN data source returns results WHEN fetchBreedList is called THEN upserts breeds to local db`() = runTest {
         val response = listOf(breedsResponse("1"))
         val breeds = listOf(breed("1"))
-        coEvery { remoteDataSource.fetchBreedList() } returns response
+        coEvery { remoteDataSource.fetchBreedList(page = 0, limit = 15) } returns response
         every { mapper.map(response) } returns breeds
 
-        repository.fetchBreedList().toList()
+        repository.fetchBreedList(page = 0, limit = 15).toList()
 
         coVerify(exactly = 1) { catBreedDao.upsertBreeds(any()) }
     }
 
     @Test
     fun `GIVEN api fails and db has cached data WHEN fetchBreedList is called THEN emits cached breeds`() = runTest {
-        coEvery { remoteDataSource.fetchBreedList() } throws RuntimeException("network down")
-        coEvery { catBreedDao.getBreedsPage(limit = 50, offset = 0) } returns listOf(catBreedEntity("1"))
+        coEvery { remoteDataSource.fetchBreedList(page = 0, limit = 15) } throws RuntimeException("network down")
+        coEvery { catBreedDao.getBreedsPage(limit = 15, offset = 0) } returns listOf(catBreedEntity("1"))
 
-        val emissions = repository.fetchBreedList().toList()
+        val emissions = repository.fetchBreedList(page = 0, limit = 15).toList()
 
         assertEquals(1, emissions.size)
         assertEquals("1", emissions.first().first().breedId)
@@ -65,34 +65,53 @@ class BreedListRepositoryImplTest {
 
     @Test
     fun `GIVEN api fails and db is empty WHEN fetchBreedList is called THEN throws NetworkException`() = runTest {
-        coEvery { remoteDataSource.fetchBreedList() } throws RuntimeException("network down")
-        coEvery { catBreedDao.getBreedsPage(limit = 50, offset = 0) } returns emptyList()
+        coEvery { remoteDataSource.fetchBreedList(page = 0, limit = 15) } throws RuntimeException("network down")
+        coEvery { catBreedDao.getBreedsPage(limit = 15, offset = 0) } returns emptyList()
 
         assertFailsWith<BreedException.NetworkException> {
-            repository.fetchBreedList().toList()
+            repository.fetchBreedList(page = 0, limit = 15).toList()
         }
     }
 
     @Test
     fun `GIVEN api returns empty and db is empty WHEN fetchBreedList is called THEN throws EmptyResultException`() = runTest {
-        coEvery { remoteDataSource.fetchBreedList() } returns emptyList()
-        coEvery { catBreedDao.getBreedsPage(limit = 50, offset = 0) } returns emptyList()
+        coEvery { remoteDataSource.fetchBreedList(page = 0, limit = 15) } returns emptyList()
+        coEvery { catBreedDao.getBreedsPage(limit = 15, offset = 0) } returns emptyList()
 
         assertFailsWith<BreedException.EmptyResultException> {
-            repository.fetchBreedList().toList()
+            repository.fetchBreedList(page = 0, limit = 15).toList()
         }
         verify(exactly = 0) { mapper.map(any()) }
     }
 
     @Test
     fun `GIVEN api returns empty and db has cached data WHEN fetchBreedList is called THEN emits cached breeds`() = runTest {
-        coEvery { remoteDataSource.fetchBreedList() } returns emptyList()
-        coEvery { catBreedDao.getBreedsPage(limit = 50, offset = 0) } returns listOf(catBreedEntity("1"))
+        coEvery { remoteDataSource.fetchBreedList(page = 0, limit = 15) } returns emptyList()
+        coEvery { catBreedDao.getBreedsPage(limit = 15, offset = 0) } returns listOf(catBreedEntity("1"))
 
-        val emissions = repository.fetchBreedList().toList()
+        val emissions = repository.fetchBreedList(page = 0, limit = 15).toList()
 
         assertEquals(1, emissions.size)
         assertEquals("1", emissions.first().first().breedId)
+    }
+
+    @Test
+    fun `GIVEN breed exists in db WHEN fetchBreedById is called THEN emits that breed`() = runTest {
+        coEvery { catBreedDao.getBreedById("abys") } returns catBreedEntity("abys")
+
+        val emissions = repository.fetchBreedById("abys").toList()
+
+        assertEquals(1, emissions.size)
+        assertEquals("abys", emissions.first().breedId)
+    }
+
+    @Test
+    fun `GIVEN breed does not exist in db WHEN fetchBreedById is called THEN throws NetworkException`() = runTest {
+        coEvery { catBreedDao.getBreedById("unknown") } returns null
+
+        assertFailsWith<BreedException.NetworkException> {
+            repository.fetchBreedById("unknown").toList()
+        }
     }
 
     private fun breedsResponse(id: String) = BreedsResponse(
@@ -114,6 +133,7 @@ class BreedListRepositoryImplTest {
         origin = "Origin $id",
         temperament = "Active",
         description = "description-$id",
+        weightMetric = "3 - 5",
     )
 
     private fun catBreedEntity(id: String) = CatBreedEntity(
@@ -124,5 +144,6 @@ class BreedListRepositoryImplTest {
         origin = "Origin $id",
         temperament = "Active",
         description = "description-$id",
+        weightMetric = "3 - 5",
     )
 }

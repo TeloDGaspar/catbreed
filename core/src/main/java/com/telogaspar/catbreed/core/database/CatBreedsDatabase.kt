@@ -7,7 +7,7 @@ import com.telogaspar.catbreed.core.database.entity.CatBreedEntity
 
 @Database(
     entities = [CatBreedEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = false,
 )
 abstract class CatBreedsDatabase : RoomDatabase() {

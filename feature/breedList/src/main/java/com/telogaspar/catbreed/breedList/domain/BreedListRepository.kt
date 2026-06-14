@@ -3,7 +3,8 @@ package com.telogaspar.catbreed.breedList.domain
 import kotlinx.coroutines.flow.Flow
 
 interface BreedListRepository {
-    fun fetchBreedList(): Flow<List<Breed>>
+    fun fetchBreedList(page: Int, limit: Int): Flow<List<Breed>>
+    fun fetchBreedById(id: String): Flow<Breed>
 }
 
 data class Breed(
@@ -14,4 +15,5 @@ data class Breed(
     val origin: String?,
     val temperament: String?,
     val description: String?,
+    val weightMetric: String?,
 )

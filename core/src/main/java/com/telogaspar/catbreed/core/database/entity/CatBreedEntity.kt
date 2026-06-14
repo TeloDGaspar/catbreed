@@ -12,4 +12,5 @@ data class CatBreedEntity(
     val description: String,
     val lifeSpan: String,
     val imageUrl: String?,
+    val weightMetric: String,
 )
