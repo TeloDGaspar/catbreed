@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.telogaspar.catbreed.breedList.data.api.BreedApiIntegrationTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-06-14T17:50:00.143Z" hostname="L-FK63XFNR41" time="1.724">
+  <properties/>
+  <testcase name="GIVEN live api WHEN getBreeds is called THEN prints breed names for manual inspection" classname="com.telogaspar.catbreed.breedList.data.api.BreedApiIntegrationTest" time="1.021"/>
+  <testcase name="GIVEN live api WHEN getBreeds is called THEN each breed has an id and name" classname="com.telogaspar.catbreed.breedList.data.api.BreedApiIntegrationTest" time="0.411"/>
+  <testcase name="GIVEN live api WHEN getBreeds is called THEN returns a non-empty list" classname="com.telogaspar.catbreed.breedList.data.api.BreedApiIntegrationTest" time="0.291"/>
+  <system-out><![CDATA[=== Breeds from API ===
+• Abyssinian (Egypt) — Active, Energetic, Independent, Intelligent, Gentle
+• Aegean (Greece) — Affectionate, Social, Intelligent, Playful, Active
+• American Bobtail (United States) — Intelligent, Interactive, Lively, Playful, Sensitive
+• American Curl (United States) — Affectionate, Curious, Intelligent, Interactive, Lively, Playful, Social
+• American Shorthair (United States) — Active, Curious, Easy Going, Playful, Calm
+• American Wirehair (United States) — Affectionate, Curious, Gentle, Intelligent, Interactive, Lively, Loyal, Playful, Sensible, Social
+• Arabian Mau (United Arab Emirates) — Affectionate, Agile, Curious, Independent, Playful, Loyal
+• Australian Mist (Australia) — Lively, Social, Fun-loving, Relaxed, Affectionate
+• Balinese (United States) — Affectionate, Intelligent, Playful
+• Bambino (United States) — Affectionate, Lively, Friendly, Intelligent
+=== Total: 10 ===
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
