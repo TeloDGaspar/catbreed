@@ -16,7 +16,8 @@ internal class EventMapper @Inject constructor() : Mapper<List<BreedsResponse>, 
                 temperament = item.temperament,
                 lifeSpan = item.life_span,
                 origin = item.origin,
-                imageUrl = item.image?.url ?: "",
+                imageUrl = item.image?.url
+                    ?: item.reference_image_id?.let { "https://cdn2.thecatapi.com/images/$it.jpg" },
                 weightMetric = item.weight.metric,
             )
         }

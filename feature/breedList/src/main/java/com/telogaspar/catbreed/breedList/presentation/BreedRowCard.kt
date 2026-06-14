@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -33,10 +34,15 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.SubcomposeAsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.telogaspar.catbreed.breedList.domain.Breed
 import com.telogaspar.catbreed.core.theme.LocalAppColors
 import com.telogaspar.catbreed.core.theme.LocalAppFonts
@@ -103,15 +109,9 @@ internal fun BreedRowCard(breed: Breed, onClick: () -> Unit) {
 
 @Composable
 private fun BreedAvatar(breed: Breed) {
-    val fonts = LocalAppFonts.current
     val hue = breedHue(breed.breedName)
     val c1 = Color.hsl(hue, 0.58f, 0.62f)
     val c2 = Color.hsl((hue + 26f) % 360f, 0.46f, 0.38f)
-    val initials = breed.breedName
-        .split(" ")
-        .mapNotNull { it.firstOrNull()?.uppercaseChar() }
-        .take(2)
-        .joinToString("")
 
     Box(
         modifier = Modifier
@@ -120,6 +120,30 @@ private fun BreedAvatar(breed: Breed) {
             .background(Brush.radialGradient(colors = listOf(c1, c2), center = Offset(16f, 13f), radius = 70f)),
         contentAlignment = Alignment.Center,
     ) {
+        SubcomposeAsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(breed.imageUrl)
+                .crossfade(true)
+                .build(),
+            contentDescription = breed.breedName,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize(),
+            loading = { BreedAvatarFallback(breed.breedName) },
+            error = { BreedAvatarFallback(breed.breedName) },
+        )
+    }
+}
+
+@Composable
+private fun BreedAvatarFallback(breedName: String) {
+    val fonts = LocalAppFonts.current
+    val initials = breedName
+        .split(" ")
+        .mapNotNull { it.firstOrNull()?.uppercaseChar() }
+        .take(2)
+        .joinToString("")
+
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(text = initials, fontFamily = fonts.serif, fontWeight = FontWeight.SemiBold, fontSize = 20.sp, color = Color.White.copy(alpha = 0.95f))
     }
 }

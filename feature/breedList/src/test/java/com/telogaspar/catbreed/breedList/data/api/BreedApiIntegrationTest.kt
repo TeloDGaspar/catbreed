@@ -10,7 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class BreedApiIntegrationTest {
 
     private val api: BreedsEventApi = Retrofit.Builder()
-        .baseUrl("https://api.thecatapi.com/")
+        .baseUrl("https://api.thecatapi.com/v1/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
         .create(BreedsEventApi::class.java)

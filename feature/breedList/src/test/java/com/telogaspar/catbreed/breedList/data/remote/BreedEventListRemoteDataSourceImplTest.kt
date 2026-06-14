@@ -19,27 +19,27 @@ class BreedEventListRemoteDataSourceImplTest {
     @Test
     fun `GIVEN api returns a list of breeds WHEN fetchBreedList is called THEN returns the same breeds`() = runTest {
         val expected = listOf(breedsResponse("1"), breedsResponse("2"))
-        coEvery { api.getBreeds() } returns expected
+        coEvery { api.getBreeds(page = 0, limit = 15) } returns expected
 
-        val result = dataSource.fetchBreedList()
+        val result = dataSource.fetchBreedList(page = 0, limit = 15)
 
         assertEquals(expected, result)
     }
 
     @Test
     fun `GIVEN api is configured WHEN fetchBreedList is called THEN delegates to the api exactly once`() = runTest {
-        coEvery { api.getBreeds() } returns emptyList()
+        coEvery { api.getBreeds(page = 0, limit = 15) } returns emptyList()
 
-        dataSource.fetchBreedList()
+        dataSource.fetchBreedList(page = 0, limit = 15)
 
-        coVerify(exactly = 1) { api.getBreeds() }
+        coVerify(exactly = 1) { api.getBreeds(page = 0, limit = 15) }
     }
 
     @Test
     fun `GIVEN api returns empty list WHEN fetchBreedList is called THEN returns empty list`() = runTest {
-        coEvery { api.getBreeds() } returns emptyList()
+        coEvery { api.getBreeds(page = 0, limit = 15) } returns emptyList()
 
-        val result = dataSource.fetchBreedList()
+        val result = dataSource.fetchBreedList(page = 0, limit = 15)
 
         assertEquals(emptyList<BreedsResponse>(), result)
     }

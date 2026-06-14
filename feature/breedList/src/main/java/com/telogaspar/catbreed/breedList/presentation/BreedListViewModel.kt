@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 data class BreedListUiState(
     val allBreeds: List<Breed> = emptyList(),
-    val isLoading: Boolean = false,
+    val isLoading: Boolean = true,
     val isLoadingMore: Boolean = false,
     val isLastPage: Boolean = false,
     val error: String? = null,

@@ -52,25 +52,37 @@ class EventMapperTest {
     }
 
     @Test
-    fun `GIVEN image is null WHEN map is called THEN image url falls back to empty string`() {
-        val source = listOf(breedsResponse(id = "1").copy(image = null))
+    fun `GIVEN image and reference id are null WHEN map is called THEN image url is null`() {
+        val source = listOf(breedsResponse(id = "1").copy(image = null, reference_image_id = null))
 
         val result = mapper.map(source)
 
-        assertEquals("", result.first().imageUrl)
+        assertEquals(null, result.first().imageUrl)
     }
 
     @Test
-    fun `GIVEN image url is null WHEN map is called THEN image url falls back to empty string`() {
+    fun `GIVEN image url is null WHEN map is called THEN image url falls back to reference image cdn url`() {
         val source = listOf(
             breedsResponse(id = "1").copy(
                 image = Image(height = 0, id = "img", url = null, width = 0),
+                reference_image_id = "abc123",
             ),
         )
 
         val result = mapper.map(source)
 
-        assertEquals("", result.first().imageUrl)
+        assertEquals("https://cdn2.thecatapi.com/images/abc123.jpg", result.first().imageUrl)
+    }
+
+    @Test
+    fun `GIVEN image is null but reference id exists WHEN map is called THEN image url is built from reference id`() {
+        val source = listOf(
+            breedsResponse(id = "1").copy(image = null, reference_image_id = "xyz789"),
+        )
+
+        val result = mapper.map(source)
+
+        assertEquals("https://cdn2.thecatapi.com/images/xyz789.jpg", result.first().imageUrl)
     }
 
     @Test
