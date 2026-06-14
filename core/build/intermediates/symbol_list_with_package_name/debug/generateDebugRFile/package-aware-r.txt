@@ -1,1 +1,0 @@
-com.telogaspar.catbreed.core

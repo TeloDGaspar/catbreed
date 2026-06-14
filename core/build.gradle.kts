@@ -46,6 +46,11 @@ dependencies {
     api(libs.retrofit.converter.gson)
     implementation(libs.okhttp.logging.interceptor)
 
+    // Room — api() so feature modules can see the DAOs and entities
+    api(libs.room.runtime)
+    api(libs.room.ktx)
+    ksp(libs.room.compiler)
+
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
 

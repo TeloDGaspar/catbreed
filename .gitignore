@@ -1,15 +1,40 @@
+# Built outputs
+build/
+/build
 *.iml
-.gradle
-/local.properties
+compileDebugKotlin
+
+# Gradle
+.gradle/
+gradle/wrapper/gradle-wrapper.jar
+
+# Local config (secrets, SDK paths)
+local.properties
+
+# IntelliJ / Android Studio
 /.idea/caches
 /.idea/libraries
 /.idea/modules.xml
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
+.idea/gradle.xml
+*.iml
+
+# macOS
 .DS_Store
-/build
+
+# Android
 /captures
 .externalNativeBuild
 .cxx
-local.properties
+
+# Keystore / signing
+*.jks
+*.keystore
+
+# KSP / kapt generated sources (rebuilt on compile)
+**/build/generated/
+
+# Profiling / coverage
+*.hprof
