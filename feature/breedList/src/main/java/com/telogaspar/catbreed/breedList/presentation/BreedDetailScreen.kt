@@ -23,6 +23,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -69,13 +71,23 @@ fun BreedDetailScreen(
             uiState.error != null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 BreedListErrorState(message = uiState.error!!, onRetry = {})
             }
-            uiState.breed != null -> DetailContent(breed = uiState.breed!!, onBack = onBack)
+            uiState.breed != null -> DetailContent(
+                breed = uiState.breed!!,
+                isFavourite = uiState.isFavourite,
+                onToggleFavourite = viewModel::toggleFavourite,
+                onBack = onBack,
+            )
         }
     }
 }
 
 @Composable
-private fun DetailContent(breed: Breed, onBack: () -> Unit) {
+private fun DetailContent(
+    breed: Breed,
+    isFavourite: Boolean,
+    onToggleFavourite: () -> Unit,
+    onBack: () -> Unit,
+) {
     val colors = LocalAppColors.current
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -123,7 +135,7 @@ private fun DetailContent(breed: Breed, onBack: () -> Unit) {
                 .padding(horizontal = 20.dp, vertical = 14.dp),
         ) {
             Button(
-                onClick = {},
+                onClick = onToggleFavourite,
                 shape = CircleShape,
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                 contentPadding = PaddingValues(0.dp),
@@ -135,13 +147,24 @@ private fun DetailContent(breed: Breed, onBack: () -> Unit) {
                         .background(colors.goldGradient, CircleShape),
                     contentAlignment = Alignment.Center,
                 ) {
-                    Text(
-                        text = "Add to favourites",
-                        fontFamily = LocalAppFonts.current.sans,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 15.5.sp,
-                        color = colors.onGold,
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        Icon(
+                            imageVector = if (isFavourite) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+                            contentDescription = null,
+                            tint = colors.onGold,
+                            modifier = Modifier.size(20.dp),
+                        )
+                        Text(
+                            text = if (isFavourite) "Remove from favourites" else "Add to favourites",
+                            fontFamily = LocalAppFonts.current.sans,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 15.5.sp,
+                            color = colors.onGold,
+                        )
+                    }
                 }
             }
         }

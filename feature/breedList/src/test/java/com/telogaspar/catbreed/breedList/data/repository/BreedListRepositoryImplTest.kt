@@ -1,5 +1,6 @@
 package com.telogaspar.catbreed.breedList.data.repository
 
+import com.telogaspar.catbreed.breedList.data.local.BreedLocalDataSource
 import com.telogaspar.catbreed.breedList.data.mapper.EventMapper
 import com.telogaspar.catbreed.breedList.data.model.BreedsResponse
 import com.telogaspar.catbreed.breedList.data.model.Image
@@ -7,7 +8,6 @@ import com.telogaspar.catbreed.breedList.data.model.Weight
 import com.telogaspar.catbreed.breedList.data.remote.BreedEventListRemoteDataSource
 import com.telogaspar.catbreed.breedList.domain.Breed
 import com.telogaspar.catbreed.breedList.domain.BreedException
-import com.telogaspar.catbreed.core.database.dao.CatBreedDao
 import com.telogaspar.catbreed.core.database.entity.CatBreedEntity
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -23,9 +23,9 @@ import kotlin.test.assertFailsWith
 class BreedListRepositoryImplTest {
 
     private val remoteDataSource: BreedEventListRemoteDataSource = mockk()
+    private val localDataSource: BreedLocalDataSource = mockk(relaxed = true)
     private val mapper: EventMapper = mockk()
-    private val catBreedDao: CatBreedDao = mockk(relaxed = true)
-    private val repository = BreedListRepositoryImpl(remoteDataSource, mapper, catBreedDao)
+    private val repository = BreedListRepositoryImpl(remoteDataSource, localDataSource, mapper)
 
     @Test
     fun `GIVEN data source returns results WHEN fetchBreedList is called THEN emits mapped breeds`() = runTest {
@@ -40,7 +40,7 @@ class BreedListRepositoryImplTest {
     }
 
     @Test
-    fun `GIVEN data source returns results WHEN fetchBreedList is called THEN upserts breeds to local db`() = runTest {
+    fun `GIVEN data source returns results WHEN fetchBreedList is called THEN upserts breeds to local data source`() = runTest {
         val response = listOf(breedsResponse("1"))
         val breeds = listOf(breed("1"))
         coEvery { remoteDataSource.fetchBreedList(page = 0, limit = 15) } returns response
@@ -48,13 +48,13 @@ class BreedListRepositoryImplTest {
 
         repository.fetchBreedList(page = 0, limit = 15).toList()
 
-        coVerify(exactly = 1) { catBreedDao.upsertBreeds(any()) }
+        coVerify(exactly = 1) { localDataSource.upsertBreeds(any()) }
     }
 
     @Test
-    fun `GIVEN api fails and db has cached data WHEN fetchBreedList is called THEN emits cached breeds`() = runTest {
+    fun `GIVEN api fails and cache has data WHEN fetchBreedList is called THEN emits cached breeds`() = runTest {
         coEvery { remoteDataSource.fetchBreedList(page = 0, limit = 15) } throws RuntimeException("network down")
-        coEvery { catBreedDao.getBreedsPage(limit = 15, offset = 0) } returns listOf(catBreedEntity("1"))
+        coEvery { localDataSource.getBreedsPage(limit = 15, offset = 0) } returns listOf(catBreedEntity("1"))
 
         val emissions = repository.fetchBreedList(page = 0, limit = 15).toList()
 
@@ -64,9 +64,9 @@ class BreedListRepositoryImplTest {
     }
 
     @Test
-    fun `GIVEN api fails and db is empty WHEN fetchBreedList is called THEN throws NetworkException`() = runTest {
+    fun `GIVEN api fails and cache is empty WHEN fetchBreedList is called THEN throws NetworkException`() = runTest {
         coEvery { remoteDataSource.fetchBreedList(page = 0, limit = 15) } throws RuntimeException("network down")
-        coEvery { catBreedDao.getBreedsPage(limit = 15, offset = 0) } returns emptyList()
+        coEvery { localDataSource.getBreedsPage(limit = 15, offset = 0) } returns emptyList()
 
         assertFailsWith<BreedException.NetworkException> {
             repository.fetchBreedList(page = 0, limit = 15).toList()
@@ -74,9 +74,9 @@ class BreedListRepositoryImplTest {
     }
 
     @Test
-    fun `GIVEN api returns empty and db is empty WHEN fetchBreedList is called THEN throws EmptyResultException`() = runTest {
+    fun `GIVEN api returns empty and cache is empty WHEN fetchBreedList is called THEN throws EmptyResultException`() = runTest {
         coEvery { remoteDataSource.fetchBreedList(page = 0, limit = 15) } returns emptyList()
-        coEvery { catBreedDao.getBreedsPage(limit = 15, offset = 0) } returns emptyList()
+        coEvery { localDataSource.getBreedsPage(limit = 15, offset = 0) } returns emptyList()
 
         assertFailsWith<BreedException.EmptyResultException> {
             repository.fetchBreedList(page = 0, limit = 15).toList()
@@ -85,9 +85,9 @@ class BreedListRepositoryImplTest {
     }
 
     @Test
-    fun `GIVEN api returns empty and db has cached data WHEN fetchBreedList is called THEN emits cached breeds`() = runTest {
+    fun `GIVEN api returns empty and cache has data WHEN fetchBreedList is called THEN emits cached breeds`() = runTest {
         coEvery { remoteDataSource.fetchBreedList(page = 0, limit = 15) } returns emptyList()
-        coEvery { catBreedDao.getBreedsPage(limit = 15, offset = 0) } returns listOf(catBreedEntity("1"))
+        coEvery { localDataSource.getBreedsPage(limit = 15, offset = 0) } returns listOf(catBreedEntity("1"))
 
         val emissions = repository.fetchBreedList(page = 0, limit = 15).toList()
 
@@ -96,8 +96,8 @@ class BreedListRepositoryImplTest {
     }
 
     @Test
-    fun `GIVEN breed exists in db WHEN fetchBreedById is called THEN emits that breed`() = runTest {
-        coEvery { catBreedDao.getBreedById("abys") } returns catBreedEntity("abys")
+    fun `GIVEN breed exists in cache WHEN fetchBreedById is called THEN emits that breed`() = runTest {
+        coEvery { localDataSource.getBreedById("abys") } returns catBreedEntity("abys")
 
         val emissions = repository.fetchBreedById("abys").toList()
 
@@ -106,8 +106,8 @@ class BreedListRepositoryImplTest {
     }
 
     @Test
-    fun `GIVEN breed does not exist in db WHEN fetchBreedById is called THEN throws NetworkException`() = runTest {
-        coEvery { catBreedDao.getBreedById("unknown") } returns null
+    fun `GIVEN breed does not exist in cache WHEN fetchBreedById is called THEN throws NetworkException`() = runTest {
+        coEvery { localDataSource.getBreedById("unknown") } returns null
 
         assertFailsWith<BreedException.NetworkException> {
             repository.fetchBreedById("unknown").toList()

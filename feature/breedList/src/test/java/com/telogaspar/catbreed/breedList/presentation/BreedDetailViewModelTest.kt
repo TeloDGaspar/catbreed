@@ -3,6 +3,8 @@ package com.telogaspar.catbreed.breedList.presentation
 import androidx.lifecycle.SavedStateHandle
 import com.telogaspar.catbreed.breedList.domain.Breed
 import com.telogaspar.catbreed.breedList.domain.BreedListRepository
+import com.telogaspar.catbreed.core.repository.FavouriteInteractor
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -28,6 +30,9 @@ class BreedDetailViewModelTest {
 
     private val dispatcher = StandardTestDispatcher()
     private val repository: BreedListRepository = mockk()
+    private val favouriteInteractor: FavouriteInteractor = mockk(relaxed = true) {
+        every { getFavouriteIds() } returns flowOf(emptySet())
+    }
 
     @Before
     fun setUp() {
@@ -106,10 +111,61 @@ class BreedDetailViewModelTest {
         assertNull(viewModel.uiState.value.breed)
     }
 
+    // ── Favourites ───────────────────────────────────────────────────────────────
+
+    @Test
+    fun `GIVEN breed is in favourites WHEN viewModel is created THEN isFavourite is true`() = runTest {
+        every { repository.fetchBreedById("abys") } returns flowOf(breed())
+        every { favouriteInteractor.getFavouriteIds() } returns flowOf(setOf("abys"))
+
+        val viewModel = viewModel("abys")
+        advanceUntilIdle()
+
+        assertTrue(viewModel.uiState.value.isFavourite)
+    }
+
+    @Test
+    fun `GIVEN breed is not favourited WHEN viewModel is created THEN isFavourite is false`() = runTest {
+        every { repository.fetchBreedById("abys") } returns flowOf(breed())
+        every { favouriteInteractor.getFavouriteIds() } returns flowOf(setOf("beng"))
+
+        val viewModel = viewModel("abys")
+        advanceUntilIdle()
+
+        assertFalse(viewModel.uiState.value.isFavourite)
+    }
+
+    @Test
+    fun `GIVEN breed is not favourited WHEN toggleFavourite is called THEN it is added`() = runTest {
+        every { repository.fetchBreedById("abys") } returns flowOf(breed())
+        every { favouriteInteractor.getFavouriteIds() } returns flowOf(emptySet())
+
+        val viewModel = viewModel("abys")
+        advanceUntilIdle()
+        viewModel.toggleFavourite()
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { favouriteInteractor.addFavourite("abys") }
+    }
+
+    @Test
+    fun `GIVEN breed is favourited WHEN toggleFavourite is called THEN it is removed`() = runTest {
+        every { repository.fetchBreedById("abys") } returns flowOf(breed())
+        every { favouriteInteractor.getFavouriteIds() } returns flowOf(setOf("abys"))
+
+        val viewModel = viewModel("abys")
+        advanceUntilIdle()
+        viewModel.toggleFavourite()
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { favouriteInteractor.removeFavourite("abys") }
+    }
+
     // ── Helpers ────────────────────────────────────────────────────────────────
 
     private fun viewModel(breedId: String) = BreedDetailViewModel(
         repository = repository,
+        favouriteInteractor = favouriteInteractor,
         savedStateHandle = SavedStateHandle(mapOf("breedId" to breedId)),
     )
 

@@ -2,6 +2,7 @@ package com.telogaspar.catbreed.breedList.presentation
 
 import com.telogaspar.catbreed.breedList.domain.Breed
 import com.telogaspar.catbreed.breedList.domain.BreedListRepository
+import com.telogaspar.catbreed.core.repository.FavouriteInteractor
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -27,6 +28,9 @@ class BreedListViewModelTest {
 
     private val dispatcher = StandardTestDispatcher()
     private val repository: BreedListRepository = mockk()
+    private val favouriteInteractor: FavouriteInteractor = mockk {
+        every { getFavouriteIds() } returns flowOf(emptySet())
+    }
 
     @Before
     fun setUp() {
@@ -45,7 +49,7 @@ class BreedListViewModelTest {
         val breeds = listOf(breed("1"), breed("2"))
         every { repository.fetchBreedList(page = 0, limit = 15) } returns flowOf(breeds)
 
-        val viewModel = BreedListViewModel(repository)
+        val viewModel = BreedListViewModel(repository, favouriteInteractor)
         advanceUntilIdle()
 
         val state = viewModel.uiState.value
@@ -58,7 +62,7 @@ class BreedListViewModelTest {
     fun `GIVEN viewModel is created WHEN loading starts THEN isLoading is true`() = runTest {
         every { repository.fetchBreedList(page = 0, limit = 15) } returns flowOf(emptyList())
 
-        val viewModel = BreedListViewModel(repository)
+        val viewModel = BreedListViewModel(repository, favouriteInteractor)
 
         assertTrue(viewModel.uiState.value.isLoading)
     }
@@ -68,7 +72,7 @@ class BreedListViewModelTest {
         val breeds = List(15) { breed("$it") }
         every { repository.fetchBreedList(page = 0, limit = 15) } returns flowOf(breeds)
 
-        val viewModel = BreedListViewModel(repository)
+        val viewModel = BreedListViewModel(repository, favouriteInteractor)
         advanceUntilIdle()
 
         assertFalse(viewModel.uiState.value.isLastPage)
@@ -79,7 +83,7 @@ class BreedListViewModelTest {
         val breeds = List(7) { breed("$it") }
         every { repository.fetchBreedList(page = 0, limit = 15) } returns flowOf(breeds)
 
-        val viewModel = BreedListViewModel(repository)
+        val viewModel = BreedListViewModel(repository, favouriteInteractor)
         advanceUntilIdle()
 
         assertTrue(viewModel.uiState.value.isLastPage)
@@ -91,7 +95,7 @@ class BreedListViewModelTest {
             throw RuntimeException("network error")
         }
 
-        val viewModel = BreedListViewModel(repository)
+        val viewModel = BreedListViewModel(repository, favouriteInteractor)
         advanceUntilIdle()
 
         val state = viewModel.uiState.value
@@ -107,7 +111,7 @@ class BreedListViewModelTest {
         val breeds = listOf(breed("1", name = "Abyssinian"), breed("2", name = "Bengal"))
         every { repository.fetchBreedList(page = 0, limit = 15) } returns flowOf(breeds)
 
-        val viewModel = BreedListViewModel(repository)
+        val viewModel = BreedListViewModel(repository, favouriteInteractor)
         advanceUntilIdle()
         viewModel.onSearchQueryChange("beng")
         advanceUntilIdle()
@@ -125,7 +129,7 @@ class BreedListViewModelTest {
         )
         every { repository.fetchBreedList(page = 0, limit = 15) } returns flowOf(breeds)
 
-        val viewModel = BreedListViewModel(repository)
+        val viewModel = BreedListViewModel(repository, favouriteInteractor)
         advanceUntilIdle()
         viewModel.onSearchQueryChange("ethiopia")
         advanceUntilIdle()
@@ -140,7 +144,7 @@ class BreedListViewModelTest {
         val breeds = listOf(breed("1"), breed("2"))
         every { repository.fetchBreedList(page = 0, limit = 15) } returns flowOf(breeds)
 
-        val viewModel = BreedListViewModel(repository)
+        val viewModel = BreedListViewModel(repository, favouriteInteractor)
         advanceUntilIdle()
         viewModel.onSearchQueryChange("abc")
         viewModel.onSearchQueryChange("")
@@ -157,7 +161,7 @@ class BreedListViewModelTest {
         every { repository.fetchBreedList(page = 0, limit = 15) } returns flowOf(page0)
         every { repository.fetchBreedList(page = 1, limit = 15) } returns flowOf(page1)
 
-        val viewModel = BreedListViewModel(repository)
+        val viewModel = BreedListViewModel(repository, favouriteInteractor)
         advanceUntilIdle()
         viewModel.loadNextPage()
         advanceUntilIdle()
@@ -172,7 +176,7 @@ class BreedListViewModelTest {
         val partialPage = List(5) { breed("$it") }
         every { repository.fetchBreedList(page = 0, limit = 15) } returns flowOf(partialPage)
 
-        val viewModel = BreedListViewModel(repository)
+        val viewModel = BreedListViewModel(repository, favouriteInteractor)
         advanceUntilIdle()
         assertTrue(viewModel.uiState.value.isLastPage)
 
@@ -187,7 +191,7 @@ class BreedListViewModelTest {
         val breeds = List(15) { breed("$it") }
         every { repository.fetchBreedList(page = 0, limit = 15) } returns flowOf(breeds)
 
-        val viewModel = BreedListViewModel(repository)
+        val viewModel = BreedListViewModel(repository, favouriteInteractor)
         advanceUntilIdle()
         viewModel.onSearchQueryChange("ab")
 
@@ -207,7 +211,7 @@ class BreedListViewModelTest {
             flowOf(breeds),
         )
 
-        val viewModel = BreedListViewModel(repository)
+        val viewModel = BreedListViewModel(repository, favouriteInteractor)
         advanceUntilIdle()
         assertNotNull(viewModel.uiState.value.error)
 
@@ -229,7 +233,7 @@ class BreedListViewModelTest {
         )
         every { repository.fetchBreedList(page = 1, limit = 15) } returns flowOf(List(15) { breed("p1-$it") })
 
-        val viewModel = BreedListViewModel(repository)
+        val viewModel = BreedListViewModel(repository, favouriteInteractor)
         advanceUntilIdle()
         viewModel.loadNextPage()
         advanceUntilIdle()

@@ -20,6 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
@@ -121,9 +123,13 @@ fun AppNavigation() {
             startDestination = ROUTE_BREEDS,
             modifier = Modifier.padding(innerPadding),
         ) {
-            composable(ROUTE_BREEDS) {
+            composable(ROUTE_BREEDS) { backStackEntry ->
                 BreedListScreen(
-                    onBreedClick = { breedId -> navController.navigate("breed_detail/$breedId") }
+                    onBreedClick = { breedId ->
+                        if (backStackEntry.lifecycleIsResumed()) {
+                            navController.navigate("breed_detail/$breedId")
+                        }
+                    }
                 )
             }
 
@@ -152,3 +158,11 @@ fun AppNavigation() {
         }
     }
 }
+
+/**
+ * Guards against double navigation from rapid taps: only the tap fired while the
+ * originating destination is still RESUMED is honoured. Once the first navigation
+ * starts, the entry drops to STARTED and subsequent taps are ignored.
+ */
+private fun NavBackStackEntry.lifecycleIsResumed() =
+    lifecycle.currentState == Lifecycle.State.RESUMED
