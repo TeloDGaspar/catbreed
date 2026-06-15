@@ -2,6 +2,7 @@ package com.telogaspar.catbreed.core.network
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.telogaspar.catbreed.core.BuildConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,7 +29,14 @@ object NetworkModule {
     @Singleton
     fun provideLoggingInterceptor(): HttpLoggingInterceptor =
         HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+            // Never log the API key, even in debug.
+            redactHeader("x-api-key")
+            // Full body logging only in debug
+            level = if (BuildConfig.DEBUG) {
+                HttpLoggingInterceptor.Level.BODY
+            } else {
+                HttpLoggingInterceptor.Level.NONE
+            }
         }
 
     @Provides
@@ -37,6 +45,7 @@ object NetworkModule {
         loggingInterceptor: HttpLoggingInterceptor,
     ): OkHttpClient =
         OkHttpClient.Builder()
+            .addInterceptor(ApiKeyInterceptor(apiKey = BuildConfig.CAT_API_KEY))
             .addInterceptor(loggingInterceptor)
             .build()
 

@@ -1,7 +1,7 @@
 package com.telogaspar.catbreed.breedList.presentation
 
-import com.telogaspar.catbreed.breedList.domain.Breed
-import com.telogaspar.catbreed.breedList.domain.BreedListRepository
+import com.telogaspar.catbreed.breedList.domain.model.Breed
+import com.telogaspar.catbreed.breedList.domain.repository.BreedListRepository
 import com.telogaspar.catbreed.core.repository.FavouriteInteractor
 import io.mockk.every
 import io.mockk.mockk

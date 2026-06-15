@@ -46,7 +46,7 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import com.telogaspar.catbreed.breedList.domain.Breed
+import com.telogaspar.catbreed.breedList.domain.model.Breed
 import com.telogaspar.catbreed.core.theme.LocalAppColors
 import com.telogaspar.catbreed.core.theme.LocalAppFonts
 import kotlin.math.abs

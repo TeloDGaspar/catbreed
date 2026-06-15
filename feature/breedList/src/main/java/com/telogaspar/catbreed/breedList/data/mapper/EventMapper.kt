@@ -1,7 +1,7 @@
 package com.telogaspar.catbreed.breedList.data.mapper
 
 import com.telogaspar.catbreed.breedList.data.model.BreedsResponse
-import com.telogaspar.catbreed.breedList.domain.Breed
+import com.telogaspar.catbreed.breedList.domain.model.Breed
 import com.telogaspar.catbreed.core.mapper.Mapper
 import javax.inject.Inject
 

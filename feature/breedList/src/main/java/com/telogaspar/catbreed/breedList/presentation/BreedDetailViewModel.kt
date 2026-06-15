@@ -3,8 +3,8 @@ package com.telogaspar.catbreed.breedList.presentation
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.telogaspar.catbreed.breedList.domain.Breed
-import com.telogaspar.catbreed.breedList.domain.BreedListRepository
+import com.telogaspar.catbreed.breedList.domain.model.Breed
+import com.telogaspar.catbreed.breedList.domain.repository.BreedListRepository
 import com.telogaspar.catbreed.core.repository.FavouriteInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

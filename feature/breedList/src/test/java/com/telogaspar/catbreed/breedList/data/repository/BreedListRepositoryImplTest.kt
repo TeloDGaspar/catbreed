@@ -6,8 +6,8 @@ import com.telogaspar.catbreed.breedList.data.model.BreedsResponse
 import com.telogaspar.catbreed.breedList.data.model.Image
 import com.telogaspar.catbreed.breedList.data.model.Weight
 import com.telogaspar.catbreed.breedList.data.remote.BreedEventListRemoteDataSource
-import com.telogaspar.catbreed.breedList.domain.Breed
-import com.telogaspar.catbreed.breedList.domain.BreedException
+import com.telogaspar.catbreed.breedList.domain.model.Breed
+import com.telogaspar.catbreed.breedList.domain.exception.BreedException
 import com.telogaspar.catbreed.core.database.entity.CatBreedEntity
 import io.mockk.coEvery
 import io.mockk.coVerify

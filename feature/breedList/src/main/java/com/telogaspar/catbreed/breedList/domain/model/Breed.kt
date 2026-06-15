@@ -1,11 +1,4 @@
-package com.telogaspar.catbreed.breedList.domain
-
-import kotlinx.coroutines.flow.Flow
-
-interface BreedListRepository {
-    fun fetchBreedList(page: Int, limit: Int): Flow<List<Breed>>
-    fun fetchBreedById(id: String): Flow<Breed>
-}
+package com.telogaspar.catbreed.breedList.domain.model
 
 data class Breed(
     val breedId: String,

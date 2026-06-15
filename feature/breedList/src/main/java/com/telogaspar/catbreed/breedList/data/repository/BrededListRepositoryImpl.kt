@@ -3,9 +3,9 @@ package com.telogaspar.catbreed.breedList.data.repository
 import com.telogaspar.catbreed.breedList.data.local.BreedLocalDataSource
 import com.telogaspar.catbreed.breedList.data.mapper.EventMapper
 import com.telogaspar.catbreed.breedList.data.remote.BreedEventListRemoteDataSource
-import com.telogaspar.catbreed.breedList.domain.Breed
-import com.telogaspar.catbreed.breedList.domain.BreedException
-import com.telogaspar.catbreed.breedList.domain.BreedListRepository
+import com.telogaspar.catbreed.breedList.domain.model.Breed
+import com.telogaspar.catbreed.breedList.domain.exception.BreedException
+import com.telogaspar.catbreed.breedList.domain.repository.BreedListRepository
 import com.telogaspar.catbreed.core.database.entity.CatBreedEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -35,6 +35,10 @@ internal class BreedListRepositoryImpl @Inject constructor(
         }
     }.flowOn(Dispatchers.IO)
 
+    /**
+       It uses the cache to reduce the amount of requests to the network, as when the app loads
+        the content if save in the database, it is a trade-off
+     */
     override fun fetchBreedById(id: String): Flow<Breed> = flow {
         val entity = localDataSource.getBreedById(id)
             ?: throw BreedException.NetworkException(NoSuchElementException("Breed $id not found"))

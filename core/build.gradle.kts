@@ -1,7 +1,22 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.ksp)
+}
+
+// Read the TheCatAPI key from local.properties (gitignored) or an env var (for CI).
+// Falls back to an empty string so the app still builds and runs keyless.
+val catApiKey: String = run {
+    val properties = Properties()
+    val localPropsFile = rootProject.file("local.properties")
+    if (localPropsFile.exists()) {
+        localPropsFile.inputStream().use { properties.load(it) }
+    }
+    properties.getProperty("CAT_API_KEY")
+        ?: System.getenv("CAT_API_KEY")
+        ?: ""
 }
 
 android {
@@ -15,6 +30,8 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        buildConfigField("String", "CAT_API_KEY", "\"$catApiKey\"")
     }
 
     buildTypes {
@@ -29,6 +46,9 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+    buildFeatures {
+        buildConfig = true
     }
 }
 

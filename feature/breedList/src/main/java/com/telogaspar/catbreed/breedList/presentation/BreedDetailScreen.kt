@@ -46,7 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.telogaspar.catbreed.breedList.domain.Breed
+import com.telogaspar.catbreed.breedList.domain.model.Breed
 import com.telogaspar.catbreed.core.theme.LocalAppColors
 import com.telogaspar.catbreed.core.theme.LocalAppFonts
 import kotlin.math.abs

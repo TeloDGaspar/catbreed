@@ -6,7 +6,7 @@ import com.telogaspar.catbreed.breedList.data.local.BreedLocalDataSourceImpl
 import com.telogaspar.catbreed.breedList.data.remote.BreedEventListRemoteDataSource
 import com.telogaspar.catbreed.breedList.data.remote.BreedEventListRemoteDataSourceImpl
 import com.telogaspar.catbreed.breedList.data.repository.BreedListRepositoryImpl
-import com.telogaspar.catbreed.breedList.domain.BreedListRepository
+import com.telogaspar.catbreed.breedList.domain.repository.BreedListRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides

@@ -3,7 +3,7 @@ package com.telogaspar.catbreed.breedList.data.mapper
 import com.telogaspar.catbreed.breedList.data.model.BreedsResponse
 import com.telogaspar.catbreed.breedList.data.model.Image
 import com.telogaspar.catbreed.breedList.data.model.Weight
-import com.telogaspar.catbreed.breedList.domain.Breed
+import com.telogaspar.catbreed.breedList.domain.model.Breed
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.telogaspar.catbreed.breedList.domain.Breed
+import com.telogaspar.catbreed.breedList.domain.model.Breed
 import com.telogaspar.catbreed.core.theme.LocalAppColors
 import com.telogaspar.catbreed.core.theme.LocalAppFonts
 
