@@ -4,6 +4,7 @@ import com.telogaspar.catbreed.core.database.dao.FavouriteDao
 import com.telogaspar.catbreed.core.database.entity.CatBreedEntity
 import com.telogaspar.catbreed.core.database.entity.FavouriteEntity
 import com.telogaspar.catbreed.feature.favourites.data.local.FavouriteRepositoryImpl
+import com.telogaspar.catbreed.feature.favourites.domain.model.FavouriteBreed
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
@@ -44,7 +45,7 @@ class FavouriteRepositoryImplTest {
     }
 
     @Test
-    fun `GIVEN dao emits favourite breeds WHEN getFavouriteBreeds is called THEN passes them through`() = runTest {
+    fun `GIVEN dao emits favourite breeds WHEN getFavouriteBreeds is called THEN maps them to domain model`() = runTest {
         val entity = CatBreedEntity(
             id = "abys",
             name = "Abyssinian",
@@ -59,7 +60,14 @@ class FavouriteRepositoryImplTest {
 
         val result = repository.getFavouriteBreeds().first()
 
-        assertEquals(listOf(entity), result)
+        val expected = FavouriteBreed(
+            id = "abys",
+            name = "Abyssinian",
+            origin = "Egypt",
+            imageUrl = null,
+            lifeSpan = "14 - 15",
+        )
+        assertEquals(listOf(expected), result)
     }
 
     @Test

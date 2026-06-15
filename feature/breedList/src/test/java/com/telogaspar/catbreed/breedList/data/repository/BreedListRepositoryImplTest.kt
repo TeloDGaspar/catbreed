@@ -106,10 +106,10 @@ class BreedListRepositoryImplTest {
     }
 
     @Test
-    fun `GIVEN breed does not exist in cache WHEN fetchBreedById is called THEN throws NetworkException`() = runTest {
+    fun `GIVEN breed does not exist in cache WHEN fetchBreedById is called THEN throws NotFoundException`() = runTest {
         coEvery { localDataSource.getBreedById("unknown") } returns null
 
-        assertFailsWith<BreedException.NetworkException> {
+        assertFailsWith<BreedException.NotFoundException> {
             repository.fetchBreedById("unknown").toList()
         }
     }

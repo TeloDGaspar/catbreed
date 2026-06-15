@@ -41,7 +41,7 @@ internal class BreedListRepositoryImpl @Inject constructor(
      */
     override fun fetchBreedById(id: String): Flow<Breed> = flow {
         val entity = localDataSource.getBreedById(id)
-            ?: throw BreedException.NetworkException(NoSuchElementException("Breed $id not found"))
+            ?: throw BreedException.NotFoundException(id)
         emit(entity.toDomain())
     }
 

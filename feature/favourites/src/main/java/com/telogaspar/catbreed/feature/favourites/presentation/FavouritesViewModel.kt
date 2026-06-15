@@ -2,8 +2,8 @@ package com.telogaspar.catbreed.feature.favourites.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.telogaspar.catbreed.core.database.entity.CatBreedEntity
 import com.telogaspar.catbreed.feature.favourites.domain.FavouriteRepository
+import com.telogaspar.catbreed.feature.favourites.domain.model.FavouriteBreed
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class FavouritesUiState(
-    val breeds: List<CatBreedEntity> = emptyList(),
+    val breeds: List<FavouriteBreed> = emptyList(),
     val averageLifespan: Double? = null,
 )
 
@@ -38,10 +38,10 @@ class FavouritesViewModel @Inject constructor(
         viewModelScope.launch { repository.removeFavourite(breedId) }
     }
 
-    private fun List<CatBreedEntity>.averageLifespan(): Double? {
+    private fun List<FavouriteBreed>.averageLifespan(): Double? {
         if (isEmpty()) return null
-        val parsed = mapNotNull { entity ->
-            entity.lifeSpan
+        val parsed = mapNotNull { breed ->
+            breed.lifeSpan
                 .substringBefore("-")
                 .trim()
                 .toDoubleOrNull()

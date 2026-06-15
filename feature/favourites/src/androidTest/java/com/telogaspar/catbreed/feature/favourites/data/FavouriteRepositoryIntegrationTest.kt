@@ -6,6 +6,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.telogaspar.catbreed.core.database.CatBreedsDatabase
 import com.telogaspar.catbreed.core.database.entity.CatBreedEntity
 import com.telogaspar.catbreed.feature.favourites.data.local.FavouriteRepositoryImpl
+import com.telogaspar.catbreed.feature.favourites.domain.model.FavouriteBreed
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -110,7 +111,7 @@ class FavouriteRepositoryIntegrationTest {
 
         val result = repository.getFavouriteBreeds().first()
 
-        assertEquals(listOf(breed), result)
+        assertEquals(listOf(favouriteBreed("abys", "Abyssinian")), result)
     }
 
     @Test
@@ -123,7 +124,10 @@ class FavouriteRepositoryIntegrationTest {
 
         val result = repository.getFavouriteBreeds().first()
 
-        assertEquals(listOf(abyssinian, persian), result)
+        assertEquals(
+            listOf(favouriteBreed("abys", "Abyssinian"), favouriteBreed("pers", "Persian")),
+            result,
+        )
     }
 
     @Test
@@ -159,5 +163,13 @@ class FavouriteRepositoryIntegrationTest {
         lifeSpan = "10 - 15",
         imageUrl = null,
         weightMetric = "3 - 5",
+    )
+
+    private fun favouriteBreed(id: String, name: String) = FavouriteBreed(
+        id = id,
+        name = name,
+        origin = "Unknown",
+        imageUrl = null,
+        lifeSpan = "10 - 15",
     )
 }

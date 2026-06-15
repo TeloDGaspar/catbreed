@@ -86,6 +86,29 @@ class EventMapperTest {
     }
 
     @Test
+    fun `GIVEN both image url and reference id exist WHEN map is called THEN image url takes precedence`() {
+        val source = listOf(
+            breedsResponse(id = "1").copy(
+                image = Image(height = 0, id = "img", url = "https://cat/full.png", width = 0),
+                reference_image_id = "abc123",
+            ),
+        )
+
+        val result = mapper.map(source)
+
+        assertEquals("https://cat/full.png", result.first().imageUrl)
+    }
+
+    @Test
+    fun `GIVEN a valid response WHEN map is called THEN weight metric is mapped`() {
+        val source = listOf(breedsResponse(id = "1"))
+
+        val result = mapper.map(source)
+
+        assertEquals("3 - 5", result.first().weightMetric)
+    }
+
+    @Test
     fun `GIVEN empty source WHEN map is called THEN returns empty list`() {
         val result = mapper.map(emptyList())
 

@@ -45,13 +45,13 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import com.telogaspar.catbreed.core.database.entity.CatBreedEntity
+import com.telogaspar.catbreed.feature.favourites.domain.model.FavouriteBreed
 import com.telogaspar.catbreed.core.theme.LocalAppColors
 import com.telogaspar.catbreed.core.theme.LocalAppFonts
 import kotlin.math.abs
 
 @Composable
-internal fun FavouriteCard(breed: CatBreedEntity, onRemove: () -> Unit) {
+internal fun FavouriteCard(breed: FavouriteBreed, onRemove: () -> Unit) {
     val colors = LocalAppColors.current
     val fonts = LocalAppFonts.current
     var pressed by remember { mutableStateOf(false) }
@@ -119,7 +119,7 @@ internal fun FavouriteCard(breed: CatBreedEntity, onRemove: () -> Unit) {
 }
 
 @Composable
-private fun BreedAvatar(breed: CatBreedEntity) {
+private fun BreedAvatar(breed: FavouriteBreed) {
     val fonts = LocalAppFonts.current
     val hue = breedHue(breed.name)
     val c1 = Color.hsl(hue, 0.58f, 0.62f)
