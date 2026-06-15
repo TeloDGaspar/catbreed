@@ -69,7 +69,7 @@ fun BreedDetailScreen(
                 CircularProgressIndicator(color = colors.goldDeep)
             }
             uiState.error != null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                BreedListErrorState(message = uiState.error!!, onRetry = {})
+                BreedListErrorState(message = uiState.error!!, onRetry = viewModel::retry)
             }
             uiState.breed != null -> DetailContent(
                 breed = uiState.breed!!,

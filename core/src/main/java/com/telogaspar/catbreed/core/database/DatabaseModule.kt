@@ -22,7 +22,8 @@ object DatabaseModule {
             context,
             CatBreedsDatabase::class.java,
             "cat_breeds.db",
-        ).fallbackToDestructiveMigration(true).build()
+        ).fallbackToDestructiveMigration(true) //trade-off because if is a small project
+            .build()
 
     @Provides
     @Singleton

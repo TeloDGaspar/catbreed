@@ -39,6 +39,11 @@ class BreedDetailViewModel @Inject constructor(
         observeFavouriteState()
     }
 
+    fun retry() {
+        _uiState.update { it.copy(isLoading = true, error = null) }
+        loadBreed()
+    }
+
     fun toggleFavourite() {
         viewModelScope.launch {
             if (_uiState.value.isFavourite) {

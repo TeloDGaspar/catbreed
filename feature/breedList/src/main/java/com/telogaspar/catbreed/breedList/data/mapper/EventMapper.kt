@@ -24,6 +24,12 @@ internal class EventMapper @Inject constructor() : Mapper<List<BreedsResponse>, 
         }
     }
 
+    /**
+     *
+     * KNOWN LIMITATION: this assumes a `.jpg` extension. Some breed images are `.png`/`.gif`
+     * and will 404 (Coil then falls back to the initials avatar). The accurate implementation is
+     * to call `GET /images/{id}` per breed, but it is one more network call
+     */
     private fun resolveImageUrl(item: BreedsResponse): String? =
         item.image?.url ?: item.reference_image_id?.let { CAT_CDN_BASE_URL + it + ".jpg" }
 }
