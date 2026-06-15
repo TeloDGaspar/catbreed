@@ -18,8 +18,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -49,7 +52,12 @@ import com.telogaspar.catbreed.core.theme.LocalAppFonts
 import kotlin.math.abs
 
 @Composable
-internal fun BreedRowCard(breed: Breed, onClick: () -> Unit) {
+internal fun BreedRowCard(
+    breed: Breed,
+    isFavourited: Boolean,
+    onToggleFavourite: () -> Unit,
+    onClick: () -> Unit,
+) {
     val colors = LocalAppColors.current
     val fonts = LocalAppFonts.current
     var pressed by remember { mutableStateOf(false) }
@@ -71,7 +79,7 @@ internal fun BreedRowCard(breed: Breed, onClick: () -> Unit) {
                 indication = null,
                 onClick = onClick,
             )
-            .padding(start = 10.dp, end = 12.dp, top = 10.dp, bottom = 10.dp),
+            .padding(start = 10.dp, end = 4.dp, top = 10.dp, bottom = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(14.dp),
     ) {
@@ -103,6 +111,15 @@ internal fun BreedRowCard(breed: Breed, onClick: () -> Unit) {
                     overflow = TextOverflow.Ellipsis,
                 )
             }
+        }
+
+        IconButton(onClick = onToggleFavourite) {
+            Icon(
+                imageVector = if (isFavourited) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+                contentDescription = if (isFavourited) "Remove from favourites" else "Add to favourites",
+                tint = if (isFavourited) colors.danger else colors.ink3,
+                modifier = Modifier.size(22.dp),
+            )
         }
     }
 }

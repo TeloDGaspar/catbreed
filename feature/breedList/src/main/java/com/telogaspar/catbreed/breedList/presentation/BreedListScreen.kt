@@ -75,7 +75,9 @@ fun BreedListScreen(
                 isLastPage = uiState.isLastPage,
                 isSearching = uiState.searchQuery.isNotBlank(),
                 listState = listState,
+                favouriteIds = uiState.favouriteIds,
                 onBreedClick = onBreedClick,
+                onToggleFavourite = viewModel::toggleFavourite,
             )
         }
     }

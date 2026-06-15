@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.telogaspar.catbreed.breedList.domain.Breed
 import com.telogaspar.catbreed.breedList.domain.BreedListRepository
+import com.telogaspar.catbreed.core.repository.FavouriteInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,6 +20,7 @@ data class BreedListUiState(
     val isLastPage: Boolean = false,
     val error: String? = null,
     val searchQuery: String = "",
+    val favouriteIds: Set<String> = emptySet(),
 ) {
     val filteredBreeds: List<Breed>
         get() = if (searchQuery.isBlank()) allBreeds
@@ -31,6 +33,7 @@ data class BreedListUiState(
 @HiltViewModel
 class BreedListViewModel @Inject constructor(
     private val repository: BreedListRepository,
+    private val favouriteRepository: FavouriteInteractor,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(BreedListUiState())
@@ -41,6 +44,11 @@ class BreedListViewModel @Inject constructor(
 
     init {
         loadBreeds()
+        viewModelScope.launch {
+            favouriteRepository.getFavouriteIds().collect { ids ->
+                _uiState.update { it.copy(favouriteIds = ids) }
+            }
+        }
     }
 
     fun onSearchQueryChange(query: String) {
@@ -58,6 +66,16 @@ class BreedListViewModel @Inject constructor(
         currentPage = 0
         _uiState.update { it.copy(error = null, allBreeds = emptyList()) }
         loadBreeds()
+    }
+
+    fun toggleFavourite(breedId: String) {
+        viewModelScope.launch {
+            if (breedId in _uiState.value.favouriteIds) {
+                favouriteRepository.removeFavourite(breedId)
+            } else {
+                favouriteRepository.addFavourite(breedId)
+            }
+        }
     }
 
     private fun loadBreeds(isLoadingMore: Boolean = false) {

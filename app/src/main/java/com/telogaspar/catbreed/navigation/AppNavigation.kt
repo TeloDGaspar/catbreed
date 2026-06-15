@@ -139,7 +139,15 @@ fun AppNavigation() {
             }
 
             composable(ROUTE_FAVOURITES) {
-                FavouritesScreen()
+                FavouritesScreen(
+                    onNavigateToBreeds = {
+                        navController.navigate(ROUTE_BREEDS) {
+                            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                )
             }
         }
     }

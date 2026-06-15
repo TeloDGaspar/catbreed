@@ -1,11 +1,9 @@
 package com.telogaspar.catbreed.feature.favourites.domain
 
 import com.telogaspar.catbreed.core.database.entity.CatBreedEntity
+import com.telogaspar.catbreed.core.repository.FavouriteInteractor
 import kotlinx.coroutines.flow.Flow
 
-interface FavouriteRepository {
+interface FavouriteRepository : FavouriteInteractor {
     fun getFavouriteBreeds(): Flow<List<CatBreedEntity>>
-    fun getFavouriteIds(): Flow<Set<String>>
-    suspend fun addFavourite(breedId: String)
-    suspend fun removeFavourite(breedId: String)
 }

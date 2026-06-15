@@ -18,6 +18,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.FavoriteBorder
+import androidx.compose.material.icons.rounded.Pets
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,6 +42,7 @@ import kotlin.math.roundToInt
 
 @Composable
 fun FavouritesScreen(
+    onNavigateToBreeds: () -> Unit = {},
     viewModel: FavouritesViewModel = hiltViewModel(),
 ) {
     val colors = LocalAppColors.current
@@ -86,7 +90,7 @@ fun FavouritesScreen(
         }
 
         if (uiState.breeds.isEmpty()) {
-            EmptyFavourites(modifier = Modifier.weight(1f))
+            EmptyFavourites(onNavigateToBreeds = onNavigateToBreeds, modifier = Modifier.weight(1f))
         } else {
             LazyColumn(
                 contentPadding = PaddingValues(horizontal = 14.dp, vertical = 4.dp),
@@ -151,7 +155,7 @@ private fun LifespanBanner(
 }
 
 @Composable
-private fun EmptyFavourites(modifier: Modifier = Modifier) {
+private fun EmptyFavourites(onNavigateToBreeds: () -> Unit, modifier: Modifier = Modifier) {
     val colors = LocalAppColors.current
     val fonts = LocalAppFonts.current
 
@@ -179,6 +183,24 @@ private fun EmptyFavourites(modifier: Modifier = Modifier) {
                 fontSize = 14.sp,
                 color = colors.ink3,
             )
+            Spacer(Modifier.height(4.dp))
+            Button(
+                onClick = onNavigateToBreeds,
+                colors = ButtonDefaults.buttonColors(containerColor = colors.goldDeep),
+            ) {
+                Icon(
+                    Icons.Rounded.Pets,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp),
+                )
+                Spacer(Modifier.size(8.dp))
+                Text(
+                    text = "Browse breeds",
+                    fontFamily = fonts.sans,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 14.sp,
+                )
+            }
         }
     }
 }

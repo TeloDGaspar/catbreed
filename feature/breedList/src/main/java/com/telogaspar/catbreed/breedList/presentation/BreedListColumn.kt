@@ -30,7 +30,9 @@ internal fun BreedListColumn(
     isLastPage: Boolean,
     isSearching: Boolean,
     listState: LazyListState,
+    favouriteIds: Set<String>,
     onBreedClick: (String) -> Unit,
+    onToggleFavourite: (String) -> Unit,
 ) {
     val colors = LocalAppColors.current
     val fonts = LocalAppFonts.current
@@ -42,7 +44,12 @@ internal fun BreedListColumn(
         modifier = Modifier.fillMaxSize(),
     ) {
         itemsIndexed(breeds, key = { _, b -> b.breedId }) { _, breed ->
-            BreedRowCard(breed = breed, onClick = { onBreedClick(breed.breedId) })
+            BreedRowCard(
+                breed = breed,
+                isFavourited = breed.breedId in favouriteIds,
+                onToggleFavourite = { onToggleFavourite(breed.breedId) },
+                onClick = { onBreedClick(breed.breedId) },
+            )
         }
 
         if (!isSearching) {
